@@ -1,53 +1,73 @@
 # tstate
 
+**Reachability closure and structural analysis over state graphs.**
 
-<!-- tmig-stack-intro -->
+tstate is a pure-Python library that answers one question: given a set of
+initial states and a successor function, which states can this system
+actually reach? It computes the full closure, detects cycles, finds
+attractors, and identifies symmetries. No I/O. No dependencies beyond the
+standard library.
 
-## What this is
+## The problem
 
-**tstate** is a small pure-Python library that answers the question *which states can this system actually reach*: given a set of initial states and a successor function, it computes the full reachable closure, detects cycles, and finds attractors and symmetries — the mathematical primitives that the larger packages in the stack are built on. It's not a framework or a server or a service; it's about fifteen tests' worth of functions that do one thing and do it exactly, so that a distributed system, a state machine, or a protocol implementation can ask "what can happen from here" and get a definitive answer instead of a guess. Its purpose is to make reachability a fact you can compute rather than a property you hope for, and to give the rest of the stack a single shared definition of what "this state leads to that state" means.
+You're implementing a protocol. Five states, a transition rule. You want to
+know: can it ever reach two leaders at once? Reason by hand, or write a
+simulator and hope you hit the case, or enumerate the reachable set.
 
-*Part of the [tmig stack](https://github.com/Danny-TMIG/tmig).*
----
+tstate is the third option, done correctly.
 
-Explicit-state reachability, closure, and attractor computation for finite
-transition systems. Pure Python, no dependencies.
+## What it does
+
+Given hashable `S`, initial `S0`, and `delta: S -> Set[S]`, tstate computes
+
+    Reach(S0, delta) = union over n >= 0 of delta^n(S0)
+
+by BFS with memoization. Cycles are explicit tuples. Attractors are closed
+subsets. Symmetries are automorphisms commuting with `delta`.
 
 ## Install
 
-    pip install -e .
+    pip install tstate
 
-## API
+## Usage
 
-    from tstate import TransitionSystem, make_quotient_system
+    from tstate import reachable, cycles, attractors
 
-    edges = {"s0": ["s1"], "s1": ["s2"], "s2": ["s2"]}
-    ts = TransitionSystem(["s0"], lambda s: edges[s])
+    def delta(s):
+        return {(s + 1) % 3, s}
 
-    ts.reachable()
-    ts.is_closed(frozenset({"s2"}))
-    ts.closure_theorem()
-    ts.existential_attractor(frozenset({"s2"}))
-    ts.universal_attractor(frozenset({"s2"}))
+    assert reachable({0}, delta) == frozenset({0, 1, 2})
+    assert (0, 1, 2, 0) in cycles({0}, delta)
+    assert frozenset({0, 1, 2}) in attractors({0}, delta)
 
-    ts = make_quotient_system(n=1000, k=3, local_succ=lambda v: {1} if v == 0 else {2})
-    len(ts.reachable())     # 501501
+Realistic example — checking two-leader reachability:
 
-## Scaling
+    from tstate import reachable
 
-| n    | full (3^n) | quotient    |
-|------|------------|-------------|
-| 9    | 19,683     | —           |
-| 100  | 3^100      | 5,151       |
-| 1000 | 3^1000     | 501,501     |
-| 5000 | 3^5000     | 12,507,501  |
+    def delta(state):
+        leader, voters = state
+        out = {(leader, voters)}
+        for v in voters:
+            if v != leader:
+                out.add((v, voters))
+        return out
 
-## Test
+    R = reachable({("A", ("A", "B", "C"))}, delta)
+    assert not [s for s in R if len({s[0]}) > 1]
 
-    pytest -q
+## Known limitations
+
+- States must be hashable.
+- Memory grows with |Reach|.
+- Single-threaded.
+- Successor function must be pure.
+- Deterministic transitions only.
 
 ## Where this fits
 
-Part of a stack of independent repos tied together by `tmig`, the verifier.
-No repo imports or communicates with another; the relationship is
-conceptual and documentary. See [`docs/STACK.md`](docs/STACK.md).
+tstate is the mathematical foundation of the stack. Full model in
+[docs/STACK.md](docs/STACK.md).
+
+## License
+
+See LICENSE.
