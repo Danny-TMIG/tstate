@@ -26,6 +26,7 @@ jobs:
           path: dist/
 
   testpypi:
+    continue-on-error: true
     name: Publish to TestPyPI
     needs: build
     runs-on: ubuntu-latest
@@ -47,7 +48,7 @@ jobs:
 
   pypi:
     name: Publish to PyPI
-    needs: [build, testpypi]
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: pypi
