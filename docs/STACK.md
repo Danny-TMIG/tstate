@@ -1,10 +1,6 @@
 # How this repository relates to The Mark Intelligence Group's stack
 
-The Mark Intelligence Group's stack is a set of eight independent programs
-that together make the state and behavior of a computer system verifiable
-by outside parties. No program in the stack imports another. No program
-communicates with another at runtime. Each program is separately
-installable and separately verifiable.
+tstate is the mathematical foundation. It has one purpose — to compute the set of states reachable from a given set of initial states under a given successor function — and no runtime dependencies beyond the Python standard library. Every other program in the stack whose abstractions mention reachability uses the definitions tstate provides. The rest of this document describes the stack that sits above this foundation.
 
 ## The eight claims
 
