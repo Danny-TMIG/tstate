@@ -45,3 +45,9 @@ transition systems. Pure Python, no dependencies.
 ## Test
 
     pytest -q
+
+## Where this fits
+
+Part of a stack of independent repos tied together by `tmig`, the verifier.
+No repo imports or communicates with another; the relationship is
+conceptual and documentary. See [`docs/STACK.md`](docs/STACK.md).
