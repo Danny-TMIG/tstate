@@ -1,5 +1,15 @@
 # tstate
 
+
+<!-- tmig-stack-intro -->
+
+## What this is
+
+**tstate** is a small pure-Python library that answers the question *which states can this system actually reach*: given a set of initial states and a successor function, it computes the full reachable closure, detects cycles, and finds attractors and symmetries — the mathematical primitives that the larger packages in the stack are built on. It's not a framework or a server or a service; it's about fifteen tests' worth of functions that do one thing and do it exactly, so that a distributed system, a state machine, or a protocol implementation can ask "what can happen from here" and get a definitive answer instead of a guess. Its purpose is to make reachability a fact you can compute rather than a property you hope for, and to give the rest of the stack a single shared definition of what "this state leads to that state" means.
+
+*Part of the [tmig stack](https://github.com/Danny-TMIG/tmig).*
+---
+
 Explicit-state reachability, closure, and attractor computation for finite
 transition systems. Pure Python, no dependencies.
 
