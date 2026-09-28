@@ -10,6 +10,8 @@ the set of attractors, and the set of symmetries of the successor function.
 tstate uses only the Python standard library. tstate is the mathematical
 foundation of the tmig stack.
 
+tstate is a standalone library. The only runtime dependency is the Python standard library. No other program in the tmig stack is required to use tstate.
+
 ## What problem tstate solves
 
 A protocol implementation, a state machine, or a simulation has states and
