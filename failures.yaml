@@ -1,0 +1,13 @@
+# Failure classes declared by tstate.
+# Addresses: classes this repo's design actively mitigates.
+# Vulnerable_to: classes it is exposed to but does not mitigate.
+# Vocabulary: ~/tmig/src/tmig_bridge/failures.py (311 classes, 25 domains)
+addresses:
+  - sw.algorithm
+  - sw.assertion
+  - dst.state_transition
+  - byz.safety_violation
+vulnerable_to:
+  - byz.crash_recovery
+  - dat.corruption
+  - hum.spec_error
