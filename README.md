@@ -8,22 +8,39 @@ be reached from an initial state by applying the successor function zero or more
 times. tstate returns the reachable set, the set of cycles in the state graph,
 the set of attractors, and the set of symmetries of the successor function.
 tstate uses only the Python standard library. tstate is the mathematical
-foundation of the tmig stack.
+foundation of The Mark Intelligence Group's stack.
 
-tstate is a standalone library. The only runtime dependency is the Python standard library. No other program in the tmig stack is required to use tstate.
+tstate is a name; it is not an abbreviation.
+
+tstate is a standalone library. The only runtime dependency is the Python standard library. No other program in The Mark Intelligence Group's stack is required to use tstate.
 
 ## What problem tstate solves
 
-A protocol implementation, a state machine, or a simulation has states and
-transitions between states. A common question is whether a specific state can
-be reached. The question is decidable for finite state spaces, but existing
-implementations disagree on conventions: whether a cycle is a path that returns
-to its own start, whether attractors include states with no outgoing
-transitions, and whether the closure includes the initial states. A program that
-depends on reachability must adopt one set of conventions.
+The Mark Intelligence Group's stack produces eight independent kinds of
+verifiable claim about a computer system. tstate contributes the first:
+a claim about which states a system can reach.
 
-tstate provides one canonical implementation so that every program in the stack
-that reasons about reachability uses the same definitions.
+A reachability claim is the mathematical substrate of several other
+programs. state-substrate attests to files that hold the state.
+twin-fabric compares a model of behavior against observed behavior, which
+is a claim about which states follow which. aesn executes commands that
+move the system between states. Without a canonical definition of
+"reachable", each of those programs would have to invent one, and each
+invention would differ in the edge cases.
+
+Existing implementations disagree on three points. First, whether a path
+that returns to its own starting state counts as a cycle. Second, whether
+an attractor includes states with no outgoing transitions. Third, whether
+the reachable set includes the initial states themselves.
+
+tstate's purpose within the stack is to provide the single canonical
+definition that every other program uses. The reachable set, the set of
+cycles, the set of attractors, and the set of symmetries are each returned
+with one agreed meaning.
+
+tstate's importance within the stack is that it is the mathematical
+foundation. Every claim in the stack that begins with "the system can
+reach ..." reduces to a reachability question of the kind tstate answers.
 
 ## What tstate provides
 
@@ -101,9 +118,9 @@ leader-election protocol.
 - Only deterministic transitions are supported. Probabilistic transitions are
   not modeled.
 
-## Relationship to the tmig stack
+## Relationship to The Mark Intelligence Group's stack
 
-tstate is the mathematical foundation of the tmig stack. The abstractions in
+tstate is the mathematical foundation of The Mark Intelligence Group's stack. The abstractions in
 the other programs reduce to reachability in the sense defined above. Formal
 specification: [docs/SPEC.md](docs/SPEC.md). Relationship model:
 [docs/STACK.md](docs/STACK.md).
