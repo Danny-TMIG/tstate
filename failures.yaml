@@ -10,4 +10,4 @@ addresses:
 vulnerable_to:
   - byz.crash_recovery
   - dat.corruption
-  - hum.spec_error
+  - sw.functional_req
