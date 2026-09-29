@@ -405,7 +405,7 @@ def _release_from_env() -> Release:
 def _main(argv):
     if argv and argv[0] == "check":
         pol_path = Path(os.environ.get("TMIG_POLICY", ".github/policy.json"))
-        st_path = Path(os.environ["TMIG_STATE"])
+        st_path = Path(os.environ.get("TMIG_STATE", "publish-state.json"))
         pol = Policy(**json.loads(pol_path.read_text()))
         st = State.load(st_path)
         rel = _release_from_env()
@@ -419,7 +419,7 @@ def _main(argv):
         return 0
     if argv and argv[0] == "record":
         # append the just-published release to the state file
-        st_path = Path(os.environ["TMIG_STATE"])
+        st_path = Path(os.environ.get("TMIG_STATE", "publish-state.json"))
         st = State.load(st_path)
         rel = _release_from_env()
         st.releases.append(asdict(rel))
