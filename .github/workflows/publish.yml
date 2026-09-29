@@ -62,8 +62,8 @@ jobs:
           TMIG_COMMIT: ${{ github.sha }}
           TMIG_DIST: dist
         run: |
-          pip install --quiet "git+https://github.com/Danny-TMIG/tmig@5ade555cbabba8c0c10853b00e421279709253b0"
-          python3 -m tmig_bridge.capabilities.publisher check
+          pip install --quiet cryptography
+          python3 .github/scripts/publisher.py check
 
       - name: Record release into state
         env:
@@ -75,7 +75,7 @@ jobs:
           TMIG_COMMIT: ${{ github.sha }}
           TMIG_DIST: dist
         run: |
-          python3 -m tmig_bridge.capabilities.publisher record
+          python3 .github/scripts/publisher.py record
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add publish-state.json
