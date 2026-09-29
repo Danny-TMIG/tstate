@@ -5,6 +5,10 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   build:
     name: Build distribution
@@ -14,34 +18,32 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-      - name: Install build dependencies
-        run: python -m pip install --upgrade build
-      - name: Build package
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+      - name: Build a binary wheel and a source tarball
         run: python -m build
-      - name: Store built distribution artifacts
+      - name: Store the distribution packages
         uses: actions/upload-artifact@v4
         with:
           name: python-package-distributions
           path: dist/
 
-  pypi:
-    if: startsWith(github.ref, 'refs/tags/v')
+  pypi-publish:
     name: Publish to PyPI
-    needs: build
+    needs:
+      - build
     runs-on: ubuntu-latest
-    environment:
-      name: pypi
-      url: https://pypi.org/p/tstate
     permissions:
       id-token: write
-      contents: write
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          ref: main
-          fetch-depth: 1
-
+          python-version: "3.10"
       - name: Download all workflow artifacts
         uses: actions/download-artifact@v4
         with:
@@ -49,42 +51,19 @@ jobs:
           path: dist/
       - name: Fetch latest publish state from main
         run: |
-          git fetch origin main --depth=1
-          git show origin/main:publish-state.json > publish-state.json
-
-      - name: Pre-flight policy check (twelve rules)
-        env:
-          TMIG_POLICY: publish-policy.json
-          TMIG_STATE: publish-state.json
-          TMIG_PROJECT: tstate
-          TMIG_VERSION: ${{ github.ref_name }}
-          TMIG_TAG: ${{ github.ref_name }}
-          TMIG_COMMIT: ${{ github.sha }}
-          TMIG_DIST: dist
-        run: |
-          pip install --quiet cryptography
-          python3 .github/scripts/publisher.py check
-
-      - name: Publish distribution to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-
-      - name: Record release into state
-        if: success()
-        env:
-          TMIG_POLICY: publish-policy.json
-          TMIG_STATE: publish-state.json
-          TMIG_PROJECT: tstate
-          TMIG_VERSION: ${{ github.ref_name }}
-          TMIG_TAG: ${{ github.ref_name }}
-          TMIG_COMMIT: ${{ github.sha }}
-          TMIG_DIST: dist
-        run: |
-          python3 .github/scripts/publisher.py record
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main || true
+          git checkout origin/main -- publish-state.json || echo "{}" > publish-state.json
+      - name: Pre-flight policy check (twelve rules)
+        run: |
+          python3 .github/scripts/publisher.py check
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Record release into state
+        if: success()
+        run: |
+          python3 .github/scripts/publisher.py record
           git add publish-state.json
-          git diff --cached --quiet || git commit -m "state: record ${{ github.ref_name }}"
-          git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:main
-
-
-
+          git commit -m "state: record v${{ github.ref_name }}"
+          git push origin HEAD:main
