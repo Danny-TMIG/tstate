@@ -56,6 +56,8 @@ jobs:
           git fetch origin main || true
           git checkout origin/main -- publish-state.json || echo "{}" > publish-state.json
       - name: Pre-flight policy check (twelve rules)
+        env:
+          TMIG_POLICY: .github/policy.json
         run: |
           python3 .github/scripts/publisher.py check
       - name: Publish distribution to PyPI
