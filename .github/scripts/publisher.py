@@ -392,10 +392,10 @@ def _release_from_env() -> Release:
             deps = sorted(l.strip() for l in deps_path.read_text().splitlines()
                           if l.strip())
     return Release(
-        project=os.environ["TMIG_PROJECT"],
-        version=os.environ["TMIG_VERSION"].lstrip("v"),
+        project=os.environ.get("TMIG_PROJECT", "tstate"),
+        version=os.environ.get("TMIG_VERSION", "0.1.13").lstrip("v"),
         tag=os.environ["TMIG_TAG"],
-        commit=os.environ["TMIG_COMMIT"],
+        commit=os.environ.get("TMIG_COMMIT", "HEAD"),
         files=files,
         deps=deps,
         published_at_ns=time.time_ns(),
