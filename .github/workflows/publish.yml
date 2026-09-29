@@ -41,6 +41,11 @@ jobs:
         with:
           name: python-package-distributions
           path: dist/
+      - name: Fetch latest publish state from main
+        run: |
+          git fetch origin main --depth=1
+          git show origin/main:publish-state.json > publish-state.json
+
       - name: Pre-flight policy check (twelve rules)
         env:
           TMIG_POLICY: publish-policy.json
@@ -51,8 +56,25 @@ jobs:
           TMIG_COMMIT: ${{ github.sha }}
           TMIG_DIST: dist
         run: |
-          pip install tmig-bridge 2>/dev/null || true
+          pip install --quiet "git+https://github.com/Danny-TMIG/tmig@5ade555cbabba8c0c10853b00e421279709253b0"
           python3 -m tmig_bridge.capabilities.publisher check
+
+      - name: Record release into state
+        env:
+          TMIG_POLICY: publish-policy.json
+          TMIG_STATE: publish-state.json
+          TMIG_PROJECT: tstate
+          TMIG_VERSION: ${{ github.ref_name }}
+          TMIG_TAG: ${{ github.ref_name }}
+          TMIG_COMMIT: ${{ github.sha }}
+          TMIG_DIST: dist
+        run: |
+          python3 -m tmig_bridge.capabilities.publisher record
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add publish-state.json
+          git diff --cached --quiet || git commit -m "state: record ${{ github.ref_name }}"
+          git push origin HEAD:main
 
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
