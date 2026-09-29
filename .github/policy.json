@@ -1,16 +1,3 @@
 {
-  "rules": [
-    "version_bump",
-    "clean_tree",
-    "changelog_updated",
-    "tests_passed",
-    "signed_tag",
-    "valid_pyproject",
-    "state_synchronized",
-    "author_verified",
-    "no_debug_code",
-    "branch_main",
-    "pypi_token_valid",
-    "post_release_verify"
-  ]
+  "project": "tstate"
 }
