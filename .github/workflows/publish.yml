@@ -30,6 +30,11 @@ jobs:
     name: Publish to PyPI
     needs: build
     runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/tstate
+    permissions:
+      id-token: write
     steps:
       - name: Download all workflow artifacts
         uses: actions/download-artifact@v4
@@ -38,5 +43,3 @@ jobs:
           path: dist/
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
