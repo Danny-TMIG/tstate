@@ -35,6 +35,7 @@ jobs:
       url: https://pypi.org/p/tstate
     permissions:
       id-token: write
+      contents: write
     steps:
       - name: Download all workflow artifacts
         uses: actions/download-artifact@v4
@@ -74,7 +75,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add publish-state.json
           git diff --cached --quiet || git commit -m "state: record ${{ github.ref_name }}"
-          git push origin HEAD:main
+          git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:main
 
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
