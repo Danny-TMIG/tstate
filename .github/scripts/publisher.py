@@ -404,7 +404,7 @@ def _release_from_env() -> Release:
 
 def _main(argv):
     if argv and argv[0] == "check":
-        pol_path = Path(os.environ["TMIG_POLICY"])
+        pol_path = Path(os.environ.get("TMIG_POLICY", ".github/policy.json"))
         st_path = Path(os.environ["TMIG_STATE"])
         pol = Policy(**json.loads(pol_path.read_text()))
         st = State.load(st_path)
