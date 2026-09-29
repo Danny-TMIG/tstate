@@ -17,7 +17,7 @@
   "project": "tstate",
   "rate_max": 10,
   "rate_window_ns": 604800000000000,
-  "semantic_scope": "9.9.x",
+  "semantic_scope": null,
   "tier": 0,
   "valid_until_ns": null,
   "version_pattern": "*",
