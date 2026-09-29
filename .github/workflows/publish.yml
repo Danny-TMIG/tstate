@@ -41,5 +41,18 @@ jobs:
         with:
           name: python-package-distributions
           path: dist/
+      - name: Pre-flight policy check (twelve rules)
+        env:
+          TMIG_POLICY: publish-policy.json
+          TMIG_STATE: publish-state.json
+          TMIG_PROJECT: tstate
+          TMIG_VERSION: ${{ github.ref_name }}
+          TMIG_TAG: ${{ github.ref_name }}
+          TMIG_COMMIT: ${{ github.sha }}
+          TMIG_DIST: dist
+        run: |
+          pip install tmig-bridge 2>/dev/null || true
+          python3 -m tmig_bridge.capabilities.publisher check
+
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
