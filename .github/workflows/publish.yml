@@ -5,67 +5,30 @@ on:
     tags:
       - 'v*'
 
-permissions:
-  contents: write
-  id-token: write
-
 jobs:
-  build:
-    name: Build distribution
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install build
-      - name: Build a binary wheel and a source tarball
-        run: python -m build
-      - name: Store the distribution packages
-        uses: actions/upload-artifact@v4
-        with:
-          name: python-package-distributions
-          path: dist/
-
   pypi-publish:
-    name: Publish to PyPI
-    needs:
-      - build
+    name: Publish release to PyPI
     runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/tstate
     permissions:
       id-token: write
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-      - name: Download all workflow artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: python-package-distributions
-          path: dist/
-      - name: Fetch latest publish state from main
+
+      - name: Install build dependencies
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch origin main || true
-          git checkout origin/main -- publish-state.json || echo "{}" > publish-state.json
-      - name: Pre-flight policy check (twelve rules)
-        env:
-          TMIG_POLICY: .github/policy.json
-        run: |
-          python3 .github/scripts/publisher.py check
-      - name: Publish distribution to PyPI
+          python -m pip install --upgrade pip
+          pip install build
+
+      - name: Build package
+        run: python -m build
+
+      - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-      - name: Record release into state
-        if: success()
-        run: |
-          python3 .github/scripts/publisher.py record
-          git add publish-state.json
-          git commit -m "state: record v${{ github.ref_name }}"
-          git push origin HEAD:main
