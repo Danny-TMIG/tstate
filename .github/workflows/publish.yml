@@ -66,6 +66,7 @@ jobs:
           python3 .github/scripts/publisher.py check
 
       - name: Record release into state
+        if: success()
         env:
           TMIG_POLICY: publish-policy.json
           TMIG_STATE: publish-state.json
