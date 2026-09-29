@@ -385,10 +385,12 @@ def _release_from_env() -> Release:
         if p.is_file():
             files.append([p.name, _h(p.read_bytes())])
     deps = []
-    deps_path = Path(os.environ.get("TMIG_DEPS", ""))
-    if deps_path and deps_path.exists():
-        deps = sorted(l.strip() for l in deps_path.read_text().splitlines()
-                      if l.strip())
+    deps_raw = os.environ.get("TMIG_DEPS", "").strip()
+    if deps_raw:
+        deps_path = Path(deps_raw)
+        if deps_path.is_file():
+            deps = sorted(l.strip() for l in deps_path.read_text().splitlines()
+                          if l.strip())
     return Release(
         project=os.environ["TMIG_PROJECT"],
         version=os.environ["TMIG_VERSION"].lstrip("v"),
