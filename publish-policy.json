@@ -1,38 +1,26 @@
 {
-  "project": "tstate",
-
-  "version_pattern": "*",
-  "hash_chain_root": null,
-
-  "valid_until_ns": null,
-
-  "countersign_pubkey_hex": null,
-
-  "rate_window_ns": 604800000000000,
-  "rate_max": 10,
-
-  "monotonic": true,
-
-  "semantic_scope": null,
-
-  "witness_pubkeys_hex": [],
-  "witness_required": false,
-
-  "depends_on": [],
   "aliveness_window_ns": 2592000000000000,
-  "dependencies_state_dir": null,
-
-  "progressive": false,
-  "min_history": 5,
-  "narrow_pattern": "0.0.*",
-
   "allowed_effects": [],
-
+  "countersign_pubkey_hex": null,
   "dep_baseline": [],
   "dep_growth_max": 0,
-
-  "tier": 0,
+  "dependencies_state_dir": null,
+  "depends_on": [],
+  "hash_chain_root": null,
+  "min_history": 5,
+  "monotonic": true,
+  "narrow_pattern": "0.0.*",
   "parent_pubkeys_hex": [],
+  "parent_signatures": {},
   "parent_threshold": 0,
-  "parent_signatures": {}
+  "progressive": false,
+  "project": "tstate",
+  "rate_max": 10,
+  "rate_window_ns": 604800000000000,
+  "semantic_scope": "9.9.x",
+  "tier": 0,
+  "valid_until_ns": null,
+  "version_pattern": "*",
+  "witness_pubkeys_hex": [],
+  "witness_required": false
 }
